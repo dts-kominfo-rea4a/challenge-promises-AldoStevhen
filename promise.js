@@ -20,7 +20,8 @@ const promiseOutput = (emosi) => {
     });
   }
 };
-
+promiseOutput('tidak marah')
+promiseOutput('marah')
 module.exports = {
   promiseOutput,
 };
