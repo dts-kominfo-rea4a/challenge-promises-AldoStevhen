@@ -1,29 +1,53 @@
-const { values } = require("lodash");
 const { promiseTheaterIXX, promiseTheaterVGC } = require("./external.js");
 
+// TODO: Buat fungsi promiseOutput sesuai ketentuan readme
 const promiseOutput = (emosi) => {
-  return new Promise ((resolve, reject)=>{
-    let i = 0;
+  return new Promise(async (resolve, reject) => {
+    if (emosi == null || emosi.isEmpty) {
+      return reject("wrong input");
+    }
+const promiseOutput = (data) => {
+  return new Promise((resolve, reject) => {
+    if (data === null) {
+      reject(`Terjadi kesalahan`);
+    } else {
+      promiseTheaterIXX().then((dataPengunjung) => {
+        const isiDatapengunjungIXX = [
+          dataPengunjung[0].hasil,
+          dataPengunjung[1].hasil,
+          dataPengunjung[2].hasil,
+        ];
 
-    promiseTheaterIXX().then((value)=>{
-      value.forEach(element => {
-        if(element.hasil == emosi){
-          i = i+1;
-        }
-      });
+        promiseTheaterVGC().then((dataPengunjung) => {
+          const isiDatapengunjungVGC = [
+            dataPengunjung[0].hasil,
+            dataPengunjung[1].hasil,
+            dataPengunjung[2].hasil,
+          ];
 
-      resolve(promiseTheaterVGC().then((value) =>{
-        value.forEach(element => {
-          if(element.hasil == emosi){
-            i = i+1;
+    let result = await Promise.all([promiseTheaterIXX(), promiseTheaterVGC()]);
+          let isiDataGabungan =
+            isiDatapengunjungIXX.concat(isiDatapengunjungVGC);
+
+    return resolve(
+      result.reduce(
+        (total, current) =>
+          total + current.filter((obj) => obj.hasil == emosi).length,
+        0
+      )
+    );
+          let itungIsiDataSama = {};
+          isiDataGabungan.forEach((jumlah) => {
+            itungIsiDataSama[jumlah] = (itungIsiDataSama[jumlah] || 0) + 1;
+          });
+
+          if (data === isiDataGabungan[0]) {
+            resolve(itungIsiDataSama.marah);
+          } else {
+            resolve(itungIsiDataSama.marah - 2);
           }
         });
-        return i;
-      }));
-    })
-  })
-}
-
-module.exports = {
-  promiseOutput,
+      });
+    }
+  });
 };
