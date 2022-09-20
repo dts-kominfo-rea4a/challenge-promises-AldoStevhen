@@ -1,53 +1,24 @@
 const { promiseTheaterIXX, promiseTheaterVGC } = require("./external.js");
 
 // TODO: Buat fungsi promiseOutput sesuai ketentuan readme
-const promiseOutput = (emosi) => {
-  return new Promise(async (resolve, reject) => {
-    if (emosi == null || emosi.isEmpty) {
-      return reject("wrong input");
+const promiseOutput = async (emosi) => {
+  try {
+    const theaterIXX = await promiseTheaterIXX();
+    const theaterVGC = await promiseTheaterVGC();
+    let marah = 0;
+    let tidak_marah = 0;
+    for (i in theaterIXX) {
+      theaterIXX[i].hasil === "marah" ? marah++ : tidak_marah++;
     }
-const promiseOutput = (data) => {
-  return new Promise((resolve, reject) => {
-    if (data === null) {
-      reject(`Terjadi kesalahan`);
-    } else {
-      promiseTheaterIXX().then((dataPengunjung) => {
-        const isiDatapengunjungIXX = [
-          dataPengunjung[0].hasil,
-          dataPengunjung[1].hasil,
-          dataPengunjung[2].hasil,
-        ];
-
-        promiseTheaterVGC().then((dataPengunjung) => {
-          const isiDatapengunjungVGC = [
-            dataPengunjung[0].hasil,
-            dataPengunjung[1].hasil,
-            dataPengunjung[2].hasil,
-          ];
-
-    let result = await Promise.all([promiseTheaterIXX(), promiseTheaterVGC()]);
-          let isiDataGabungan =
-            isiDatapengunjungIXX.concat(isiDatapengunjungVGC);
-
-    return resolve(
-      result.reduce(
-        (total, current) =>
-          total + current.filter((obj) => obj.hasil == emosi).length,
-        0
-      )
-    );
-          let itungIsiDataSama = {};
-          isiDataGabungan.forEach((jumlah) => {
-            itungIsiDataSama[jumlah] = (itungIsiDataSama[jumlah] || 0) + 1;
-          });
-
-          if (data === isiDataGabungan[0]) {
-            resolve(itungIsiDataSama.marah);
-          } else {
-            resolve(itungIsiDataSama.marah - 2);
-          }
-        });
-      });
+    for (i in theaterVGC) {
+      theaterVGC[i].hasil === "marah" ? marah++ : tidak_marah++;
     }
-  });
+    return emosi === "marah" ? marah : tidak_marah;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = {
+  promiseOutput,
 };
